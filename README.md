@@ -1,70 +1,71 @@
-# Getting Started with Create React App
+# Feedback App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React app for notes and reminders with priority (1–7). Add, edit, and delete notes; data is persisted via json-server. Uses React Router, Framer Motion, and React Context.
 
-## Available Scripts
+## Tech Stack
 
-In the project directory, you can run:
+- **Frontend**: React 18, React Router v6, Framer Motion, react-icons, uuid
+- **Backend**: json-server for REST API and file-based storage (`db.json`)
+- **Scripts**: `start` (frontend), `server` (json-server on port 5000), `dev` (both via concurrently)
 
-### `npm run dev`
+## Setup & Run
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Prerequisites
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Node.js and npm
 
-### `npm test`
+### Install
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+npm install
+```
 
-### `npm run build`
+If `npm run dev` fails with a missing `concurrently` error, install it:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm install concurrently --save-dev
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Run the app
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+**Option A** — Start backend and frontend together:
 
-### `npm run eject`
+```bash
+npm run dev
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+**Option B** — Run in two terminals:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. Terminal 1: `npm run server` (json-server on port 5000)
+2. Terminal 2: `npm start` (React dev server on port 3000)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Open
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Open [http://localhost:3000](http://localhost:3000). The frontend proxies API requests to `http://localhost:5000`.
 
-## Learn More
+## Functionalities
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+| Area | What the app does |
+|------|-------------------|
+| **Notes CRUD** | Add note (text + priority 1–7), edit existing note, delete note (with confirmation). |
+| **Validation** | Note text must be at least 10 characters; a day/priority must be selected before submit. |
+| **List & UI** | Notes listed newest first; each shows priority (day) and text; Framer Motion for list animations; loading spinner while fetching. |
+| **Stats** | Displays total note count and average priority ("Average Rating") on the home page. |
+| **Routing** | `/` — main page (form, stats, list); `/about` — About page with link back home; `/post` and `/post/show` — placeholder Post routes. |
+| **Persistence** | Notes stored in `db.json` via json-server (GET/POST/PUT/DELETE `/Notes`). |
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Scripts
 
-### Code Splitting
+| Command | Description |
+|---------|-------------|
+| `npm start` | React dev server. |
+| `npm run server` | json-server (watch `db.json`, port 5000). |
+| `npm run dev` | Run server + start (requires concurrently). |
+| `npm run build` | Production build. |
+| `npm test` | Run tests. |
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Project Structure
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- **State**: `src/context/NotesContext.jsx` — notes data, loading, add/edit/delete/update.
+- **Components**: `src/components` — NoteForm, NoteList, NoteItem, NotesStats, Header, shared Card/Button/Spinner.
+- **Pages**: `src/components/pages` — About, Post, NotesReminder (placeholder).

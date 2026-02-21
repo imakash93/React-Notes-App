@@ -16,15 +16,30 @@ export const NotesProvider = ({ children }) => {
   }, []);
 
   const fetchNotes = async () => {
-    const response = await fetch(`/Notes?_sort=id&_order=desc`);
-
-    const data = await response.json();
-    setNotes(data);
-    setIsLoading(false);
+    try {
+      const response = await fetch(`/Notes?_sort=id&_order=desc`);
+      if (!response.ok) {
+        setNotes([]);
+        setIsLoading(false);
+        return;
+      }
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        setNotes([]);
+        setIsLoading(false);
+        return;
+      }
+      const data = await response.json();
+      setNotes(data);
+    } catch {
+      setNotes([]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const deleteNote = async (id) => {
-    if (window.confirm("Are you sue?")) {
+    if (window.confirm("Are you sure?")) {
       await fetch(`/Notes/${id}`, {
         method: "DELETE",
       });
@@ -33,15 +48,22 @@ export const NotesProvider = ({ children }) => {
   };
 
   const addNote = async (newNote) => {
-    const response = await fetch(`/Notes`, {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify(newNote),
-    });
-    const data = await response.json();
-    setNotes([data, ...notes]);
+    try {
+      const response = await fetch(`/Notes`, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(newNote),
+      });
+      if (!response.ok) return;
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) return;
+      const data = await response.json();
+      setNotes([data, ...notes]);
+    } catch {
+      // ignore
+    }
   };
 
   const editNote = (note) => {
@@ -49,19 +71,24 @@ export const NotesProvider = ({ children }) => {
   };
 
   const updateNote = async (id, note) => {
-    const response = await fetch(`/Notes/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify(note),
-    });
-    const data = await response.json();
-
-    setNotes(
-      notes.map((item) => (item.id === id ? { ...item, ...data } : item))
-    );
-    //setNoteEdit({ note, edit: true });
+    try {
+      const response = await fetch(`/Notes/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(note),
+      });
+      if (!response.ok) return;
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) return;
+      const data = await response.json();
+      setNotes(
+        notes.map((item) => (item.id === id ? { ...item, ...data } : item))
+      );
+    } catch {
+      // ignore
+    }
   };
 
   return (
